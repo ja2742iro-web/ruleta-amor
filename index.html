@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruleta del Amor 💘</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align:center;
+    background: linear-gradient(135deg,#ff4e88,#ff9ab5);
+    color:white;
+    overflow:hidden;
+}
+
+/* 💕 Corazones flotando */
+.heart{
+    position:fixed;
+    bottom:-50px;
+    font-size:20px;
+    animation:flotar 6s linear infinite;
+    opacity:0.8;
+}
+
+@keyframes flotar{
+    0%{transform:translateY(0) rotate(0deg);}
+    100%{transform:translateY(-110vh) rotate(360deg);}
+}
+
+h1{ margin-top:30px; }
+
+.ruleta-container{
+    position:relative;
+    width:90vw;
+    max-width:380px;
+    height:90vw;
+    max-height:380px;
+    margin:30px auto;
+}
+
+canvas{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:white;
+    box-shadow:0 0 20px rgba(255,255,255,0.6);
+}
+
+.flecha{
+    position:absolute;
+    top:-20px;
+    left:50%;
+    transform:translateX(-50%);
+    border-left:15px solid transparent;
+    border-right:15px solid transparent;
+    border-bottom:30px solid white;
+}
+
+button{
+    padding:15px 30px;
+    border:none;
+    border-radius:30px;
+    background:white;
+    color:#ff4e88;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:20px;
+    font-size:18px;
+}
+
+#resultado{
+    font-size:20px;
+    margin-top:25px;
+    font-weight:bold;
+}
+
+.botonesFinales{
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💘 Ruleta del Amor 💘</h1>
+<p>Gira y deja que el destino elija nuestra cita ❤️</p>
+
+<div class="ruleta-container">
+    <div class="flecha"></div>
+    <canvas id="ruleta" width="380" height="380"></canvas>
+</div>
+
+<button onclick="girar()">Girar la ruleta 💞</button>
+
+<div id="resultado"></div>
+
+<div class="botonesFinales" id="botonesFinales">
+    <button onclick="enviarWhatsApp()">Enviar por WhatsApp 💚</button>
+</div>
+
+<script>
+
+// 💕 generar corazones dinámicos
+for(let i=0;i<20;i++){
+    let heart=document.createElement("div");
+    heart.innerHTML="💖";
+    heart.className="heart";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(15+Math.random()*20)+"px";
+    heart.style.animationDuration=(4+Math.random()*4)+"s";
+    document.body.appendChild(heart);
+}
+
+const opciones = [
+    "Cena con pizza estilo italiano 🍕",
+    "Cena hecha por mí 👨‍🍳❤️",
+    "Desayuno sorpresa ☕🥐"
+];
+
+const canvas = document.getElementById("ruleta");
+const ctx = canvas.getContext("2d");
+const colores = ["#ff4e88","#ff7aa2","#ff9ab5"];
+
+let anguloActual = 0;
+let opcionGanadora = "";
+
+function dibujarRuleta(){
+    const total = opciones.length;
+    const angulo = (2*Math.PI)/total;
+
+    for(let i=0;i<total;i++){
+        ctx.beginPath();
+        ctx.moveTo(190,190);
+        ctx.arc(190,190,190,i*angulo,(i+1)*angulo);
+        ctx.fillStyle = colores[i];
+        ctx.fill();
+    }
+}
+dibujarRuleta();
+
+function girar(){
+    document.getElementById("resultado").innerHTML = "";
+    document.getElementById("botonesFinales").style.display="none";
+
+    const total = opciones.length;
+    const angulo = 360/total;
+    const ganador = Math.floor(Math.random()*total);
+
+    opcionGanadora = opciones[ganador];
+    const giro = (360*5) + (360 - (ganador*angulo) - angulo/2);
+    anguloActual += giro;
+
+    canvas.style.transition="transform 4s ease-out";
+    canvas.style.transform=`rotate(${anguloActual}deg)`;
+}
+
+canvas.addEventListener("transitionend", function(){
+    if(opcionGanadora !== ""){
+        document.getElementById("resultado").innerHTML =
+        "💖 La cita elegida es:<br><br><span style='font-size:24px'>" 
+        + opcionGanadora + "</span>";
+
+        document.getElementById("botonesFinales").style.display="block";
+    }
+});
+
+function enviarWhatsApp(){
+    const numero = "5218994617148";
+    const mensaje = "Amor 💕 la ruleta decidió: " + opcionGanadora;
+    const url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensaje);
+    window.open(url,"_blank");
+}
+
+</script>
+
+</body>
+</html>
